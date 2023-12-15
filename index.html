@@ -4,10 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
     <title>Simple Homepage</title>
   </head>
   <body class="light-theme">
-    <div id="container" class="light-theme">
+    <div id="container">
       <header class="container__header">
         <svg
           width="141"
@@ -60,12 +64,14 @@
             class="logo-letter"
           />
         </svg>
+
         <nav class="container__links">
           <a class="container__link" href="#">About us</a>
           <a class="container__link" href="#">Product</a>
           <a class="container__link" href="#">Resource</a>
           <a class="container__link" href="#">Contact</a>
         </nav>
+
         <div class="container__toggle-theme">
           <div class="moon-icon">
             <svg
@@ -144,6 +150,27 @@
             </svg>
           </div>
         </div>
+
+        <div class="menu-button">
+          <button>
+            <i class="fa fa-bars" aria-hidden="true"></i>
+          </button>
+        </div>
+
+        <div class="mobile-navigation light-theme">
+          <div class="close-button">
+            <button>
+              <i class="fa fa-times" aria-hidden="true"></i>
+            </button>
+          </div>
+
+          <nav class="mobile-container__links">
+            <a class="mobile-container__link" href="#">About us</a>
+            <a class="mobile-container__link" href="#">Product</a>
+            <a class="mobile-container__link" href="#">Resource</a>
+            <a class="mobile-container__link" href="#">Contact</a>
+          </nav>
+        </div>
       </header>
 
       <main>
@@ -178,25 +205,65 @@
       </main>
     </div>
 
-    <script>
+    <script defer>
+      const toggleThemeButton = document.querySelector(
+        ".container__toggle-theme"
+      );
+
+      if (window.innerWidth <= 660) {
+        const containerHeader = document.querySelector(".container__header");
+        if (Array.from(containerHeader.children).includes(toggleThemeButton)) {
+          containerHeader.removeChild(toggleThemeButton);
+        }
+      }
+
+      window.addEventListener("resize", () => {
+        const mobileNavigation = document.querySelector(".mobile-navigation");
+        const containerHeader = document.querySelector(".container__header");
+
+        if (window.innerWidth <= 660) {
+          mobileNavigation.appendChild(toggleThemeButton);
+          if (
+            Array.from(containerHeader.children).includes(toggleThemeButton)
+          ) {
+            containerHeader.removeChild(toggleThemeButton);
+          }
+        } else {
+          containerHeader.appendChild(toggleThemeButton);
+          mobileNavigation.style.display = "none";
+        }
+      });
+
+      toggleThemeButton.addEventListener("click", toggleTheme);
+
+      document.querySelector(".menu-button").addEventListener("click", () => {
+        const mobileNavigation = document.querySelector(".mobile-navigation");
+        mobileNavigation.style.display = "flex";
+        mobileNavigation.appendChild(toggleThemeButton);
+      });
+
       document
-        .querySelector(".container__toggle-theme")
-        .addEventListener("click", () => {
-          toggleTheme();
-        });
+        .querySelector(".close-button")
+        .addEventListener("click", closeMobileNav);
+
+      function closeMobileNav() {
+        const mobileNavigation = document.querySelector(".mobile-navigation");
+        mobileNavigation.style.display = "none";
+        mobileNavigation.removeChild(toggleThemeButton);
+      }
 
       function changeToggleIcon() {
-        const container = document.querySelector("#container");
-        const isDarkTheme = container.classList.contains("dark-theme");
+        const body = document.querySelector("body");
+        const isDarkTheme = body.classList.contains("dark-theme");
         changeMoonIcon(isDarkTheme);
         changeSunIcon(isDarkTheme);
       }
 
       function changeLogoColor() {
-        const container = document.querySelector("#container");
+        const body = document.querySelector("body");
         const logoLetters = document.querySelectorAll(".logo-letter");
         for (let i = 0; i < logoLetters.length; i++) {
-          if (container.classList.contains("dark-theme")) {
+          if (body.classList.contains("dark-theme")) {
             logoLetters[i].attributes.fill.nodeValue = "#fff";
           } else {
             logoLetters[i].attributes.fill.nodeValue = "#223344";
@@ -207,7 +274,6 @@
       function toggleTheme() {
         const container = document.querySelector("#container");
         const body = document.querySelector("body");
-        container.classList.toggle("dark-theme");
         body.classList.toggle("dark-theme");
         changeLogoColor();
         changeToggleIcon();
